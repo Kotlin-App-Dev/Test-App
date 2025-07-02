@@ -1,99 +1,84 @@
-package com.example.test // Make sure this matches your project package
+package com.example.test
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.webkit.ConsoleMessage.MessageLevel.LOG
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.util.fastCbrt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                First()
+                Banner()
             }
         }
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Banner() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Black)
-            .height(65.dp)
-            .padding(20.dp)
-    ) {
-        Text("My APP", color = Color.White)
-    }
-}
-
-@Composable
-fun HelloWorldScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp), // Optional padding
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            "User information",
-            color = Color.Magenta,
-            fontSize = 30.sp
-        )
-
-        Spacer(modifier = Modifier.height(50.dp))
-        var name by remember { mutableStateOf("") }
-        TextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Your name ?") }
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        val context = LocalContext.current
-        Button(onClick = {
-            Toast.makeText(context,name, Toast.LENGTH_SHORT).show()
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val is_Enable by derivedStateOf { username.isNotEmpty() && password.isNotEmpty() }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
+                ),
+                title = { Text("Login app") }
+            )
         }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(Color.Gray)
+                .padding(bottom = 100.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Click me ")
+            TextField(
+                value = username,
+                onValueChange = { username = it.trim() },
+                placeholder = { Text("Username") }
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            TextField(
+                value = password,
+                visualTransformation = PasswordVisualTransformation(),
+                onValueChange = { password = it.trim() },
+                placeholder = { Text("Password") }
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            val context = LocalContext.current
+            Button(onClick = { if(is_Enable == true) { Toast.makeText(context,"Welcome $username, \n\'$password\' is your password so, don\'t forget it", Toast.LENGTH_LONG).show() } }, enabled = is_Enable) { Text("Submit") }
         }
     }
-}
 
-@Composable
-fun First(){
-    Column(
-        modifier = Modifier
-            .background(Color.DarkGray)
-            .fillMaxSize()
-    ) {
-        Banner()
-        Spacer(modifier = Modifier.height(160.dp))
-        HelloWorldScreen()
-    }
 }
-
