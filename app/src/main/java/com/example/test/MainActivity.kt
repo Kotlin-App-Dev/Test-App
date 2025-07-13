@@ -1,6 +1,5 @@
 package com.example.test
 
-import android.R
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
